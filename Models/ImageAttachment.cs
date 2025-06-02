@@ -1,14 +1,15 @@
-﻿namespace WildboarMonitor.FunctionApp.Models;
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace WildboarMonitor.FunctionApp.Models;
 
 public class ImageAttachment
 {
     public string Id { get; set; } = string.Empty;
 
+    [BsonIgnore]
     public byte[] Data { get; set; } = [];
 
     public DateTime Timestamp { get; set; }
 
-    public Status Status { get; set; } = Status.Pending;
+    public bool WildBoarDetected { get; set; } = false;
 }
-
-public enum Status { Pending, Complete }

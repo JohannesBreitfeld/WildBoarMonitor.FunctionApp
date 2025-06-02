@@ -8,11 +8,13 @@ namespace WildboarMonitor.FunctionApp.Services;
 
 public class ImageExtractionService : IImageExtractionService
 {
-    private readonly IConfiguration _config;
+    private readonly string _clientId;
+    private readonly string _clientSecret;
 
-    public ImageExtractionService(IConfiguration config)
+    public ImageExtractionService(string clientId, string clientSecret)
     {
-        _config = config;
+        _clientId = clientId;
+        _clientSecret = clientSecret;
     }
 
     public async Task<GmailService> StartService()
@@ -21,8 +23,8 @@ public class ImageExtractionService : IImageExtractionService
             (
                 new ClientSecrets
                 {
-                    ClientId = _config["installed:client_id"],
-                    ClientSecret = _config["installed:client_secret"]
+                    ClientId = _clientId,
+                    ClientSecret = _clientSecret
                 },
                 new[] { GmailService.Scope.GmailReadonly },
                 "user",
