@@ -28,7 +28,7 @@ public class AnalyzeImageFunction
     }
 
     [Function("AnalyzeImageFunction")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+    public async Task Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
@@ -38,7 +38,7 @@ public class AnalyzeImageFunction
         {
             var badResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
             await badResponse.WriteStringAsync("Invalid request payload.");
-            return badResponse;
+            return;
         }
 
         foreach (var attachment in attachments)
@@ -58,8 +58,5 @@ public class AnalyzeImageFunction
 
             await _db.InsertResultAsync(attachment);
         }
-
-        var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
-        return response;
     }
 }
