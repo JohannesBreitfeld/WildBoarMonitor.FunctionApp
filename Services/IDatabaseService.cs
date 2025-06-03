@@ -4,7 +4,7 @@ namespace WildboarMonitor.FunctionApp.Services
 {
     public interface IDatabaseService
     {
-        Task<List<ImageAttachment>> GetAllAsync();
         Task InsertResultAsync(ImageAttachment result);
+        Task<DateTime?> GetLatestTimestampAsync();
     }
 }

@@ -1,4 +1,3 @@
-using Google.Apis.Auth.OAuth2;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;

@@ -1,7 +1,6 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
-using Microsoft.Extensions.Configuration;
 using WildboarMonitor.FunctionApp.Models;
 
 namespace WildboarMonitor.FunctionApp.Services;
