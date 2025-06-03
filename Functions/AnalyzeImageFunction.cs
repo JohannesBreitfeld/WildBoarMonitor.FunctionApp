@@ -17,7 +17,10 @@ public class AnalyzeImageFunction
     private readonly PredictionEnginePool<ModelInput, ModelOutput> _predictionEnginePool;
     private readonly IDatabaseService _db;
 
-    public AnalyzeImageFunction(ILogger<AnalyzeImageFunction> logger, PredictionEnginePool<ModelInput, ModelOutput> predictionEnginePool, IDatabaseService db)
+    public AnalyzeImageFunction(
+        ILogger<AnalyzeImageFunction> logger, 
+        PredictionEnginePool<ModelInput, ModelOutput> predictionEnginePool, 
+        IDatabaseService db)
     {
         _logger = logger;
         _predictionEnginePool = predictionEnginePool;

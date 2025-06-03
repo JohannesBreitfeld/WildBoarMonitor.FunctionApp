@@ -2,6 +2,7 @@
 using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using WildboarMonitor.FunctionApp.Models;
+using WildboarMonitor.FunctionApp.Settings;
 
 namespace WildboarMonitor.FunctionApp.Services;
 
@@ -10,10 +11,10 @@ public class ImageExtractionService : IImageExtractionService
     private readonly string _clientId;
     private readonly string _clientSecret;
 
-    public ImageExtractionService(string clientId, string clientSecret)
+    public ImageExtractionService(GmailSettings settings)
     {
-        _clientId = clientId;
-        _clientSecret = clientSecret;
+        _clientId = settings.ClientId;
+        _clientSecret = settings.ClientSecret;
     }
 
     public async Task<GmailService> StartService()

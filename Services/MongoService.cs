@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using WildboarMonitor.FunctionApp.Models;
+using WildboarMonitor.FunctionApp.Settings;
 
 namespace WildboarMonitor.FunctionApp.Services;
 
@@ -7,11 +8,11 @@ public class MongoService : IDatabaseService
 {
     private readonly IMongoCollection<ImageAttachment> _collection;
 
-    public MongoService(string connectionString, string dbName)
+    public MongoService(MongoSettings settings)
     {
-        var client = new MongoClient(connectionString);
-        var database = client.GetDatabase(dbName);
-        _collection = database.GetCollection<ImageAttachment>("Images");
+        var client = new MongoClient(settings.ConnectionString);
+        var database = client.GetDatabase(settings.DatabaseName);
+        _collection = database.GetCollection<ImageAttachment>(settings.CollectionName);
     }
 
     public async Task InsertResultAsync(ImageAttachment result)
