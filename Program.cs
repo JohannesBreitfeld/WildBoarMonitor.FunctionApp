@@ -3,7 +3,11 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ML;
+using Microsoft.Extensions.Options;
 using WildboarMonitor.FunctionApp.Services;
+using WildboarMonitor.FunctionApp.Settings;
+using WildboarMonitor_FunctionApp;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -13,24 +17,25 @@ builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
+builder.Services.AddPredictionEnginePool<MLModel.ModelInput, MLModel.ModelOutput>()
+    .FromFile("MLModel.mlnet");
+
+builder.Services.Configure<MongoSettings>(
+    builder.Configuration.GetSection("MongoSettings"));
+
 builder.Services.AddSingleton<IDatabaseService>(sp =>
 {
-    var config = sp.GetRequiredService<IConfiguration>();
-
-    var connectionString = config["MongoDbConnectionString"];
-    var databaseName = config["MongoDbDatabaseName"];
-
-    return new MongoService(connectionString!, databaseName!);
+    var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
+    return new MongoService(settings);
 });
+
+builder.Services.Configure<GmailSettings>(
+    builder.Configuration.GetSection("GmailSettings"));
 
 builder.Services.AddSingleton<IImageExtractionService>( sp=>
 {
-    var config = sp.GetRequiredService<IConfiguration>();
-
-    var clientId = config["client_id"];
-    var clientSecret = config["client_secret"];
-
-    return new ImageExtractionService(clientId!, clientSecret!);
+    var settings = sp.GetRequiredService<IOptions<GmailSettings>>().Value;
+    return new ImageExtractionService(settings);
 });
 
 builder.Build().Run();
