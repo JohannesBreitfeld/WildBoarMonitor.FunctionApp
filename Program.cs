@@ -3,7 +3,9 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.ML;
 using WildboarMonitor.FunctionApp.Services;
+using WildboarMonitor_FunctionApp;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.ConfigureFunctionsWebApplication();
 builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
+
+builder.Services.AddPredictionEnginePool<MLModel.ModelInput, MLModel.ModelOutput>()
+    .FromFile("MLModel.mlnet");
 
 builder.Services.AddSingleton<IDatabaseService>(sp =>
 {
@@ -32,5 +37,6 @@ builder.Services.AddSingleton<IImageExtractionService>( sp=>
 
     return new ImageExtractionService(clientId!, clientSecret!);
 });
+
 
 builder.Build().Run();
