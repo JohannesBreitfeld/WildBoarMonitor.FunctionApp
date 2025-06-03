@@ -36,8 +36,6 @@ public class AnalyzeImageFunction
 
         if (attachments is null)
         {
-            var badResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
-            await badResponse.WriteStringAsync("Invalid request payload.");
             return;
         }
 
