@@ -1,6 +1,5 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.ML;
@@ -23,7 +22,8 @@ builder.Services.AddPredictionEnginePool<MLModel.ModelInput, MLModel.ModelOutput
 builder.Services.Configure<MongoSettings>(
     builder.Configuration.GetSection("MongoSettings"));
 
-builder.Services.AddSingleton<IDatabaseService>(sp =>
+
+builder.Services.AddScoped<IDatabaseService>(sp =>
 {
     var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
     return new MongoService(settings);
@@ -32,7 +32,7 @@ builder.Services.AddSingleton<IDatabaseService>(sp =>
 builder.Services.Configure<GmailSettings>(
     builder.Configuration.GetSection("GmailSettings"));
 
-builder.Services.AddSingleton<IImageExtractionService>( sp=>
+builder.Services.AddScoped<IImageExtractionService>( sp=>
 {
     var settings = sp.GetRequiredService<IOptions<GmailSettings>>().Value;
     return new ImageExtractionService(settings);
