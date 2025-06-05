@@ -30,3 +30,4 @@ public class MongoService : IDatabaseService
         return latest?.Timestamp;
     }
 }
+

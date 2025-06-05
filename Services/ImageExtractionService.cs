@@ -8,13 +8,11 @@ namespace WildboarMonitor.FunctionApp.Services;
 
 public class ImageExtractionService : IImageExtractionService
 {
-    private readonly string _clientId;
-    private readonly string _clientSecret;
+    private readonly GmailSettings _settings;
 
     public ImageExtractionService(GmailSettings settings)
     {
-        _clientId = settings.ClientId;
-        _clientSecret = settings.ClientSecret;
+        _settings = settings;
     }
 
     public async Task<GmailService> StartService()
@@ -23,8 +21,8 @@ public class ImageExtractionService : IImageExtractionService
             (
                 new ClientSecrets
                 {
-                    ClientId = _clientId,
-                    ClientSecret = _clientSecret
+                    ClientId = _settings.ClientId,
+                    ClientSecret = _settings.ClientSecret
                 },
                 new[] { GmailService.Scope.GmailReadonly },
                 "user",
@@ -46,7 +44,6 @@ public class ImageExtractionService : IImageExtractionService
         HashSet<ImageAttachment> attachments = [];
 
         var dateFilter = lastRetrievedMessageDate.Subtract(TimeSpan.FromDays(1)).ToString("yyyy/MM/dd");
-
         var allThreads = new List<Google.Apis.Gmail.v1.Data.Thread>();
         string? nextPageToken = null;
 
@@ -77,7 +74,6 @@ public class ImageExtractionService : IImageExtractionService
                     {
                         continue;
                     }
-
                     DateTime messageDate = UnixTimeToDateTime(message.InternalDate!.Value);
 
                     var attachId = part.Body.AttachmentId;
@@ -88,7 +84,6 @@ public class ImageExtractionService : IImageExtractionService
                     var fileName = message.Id + part.Filename;
 
                     var attachment = new ImageAttachment() { Id = fileName, Timestamp = messageDate, Data = data };
-
                     attachments.Add(attachment);
                 }
             }
