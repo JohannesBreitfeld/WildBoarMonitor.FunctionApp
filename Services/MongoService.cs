@@ -1,5 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using WildboarMonitor.FunctionApp.Models;
 using WildboarMonitor.FunctionApp.Settings;
 

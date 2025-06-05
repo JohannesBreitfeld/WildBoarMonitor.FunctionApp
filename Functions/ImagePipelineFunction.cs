@@ -28,32 +28,42 @@ public class ImagePipelineFunction
     [Function("ImagePipelineFunction")]
     public async Task Run([TimerTrigger("0 8 * * *")] TimerInfo myTimer)
     {
-        var latestTimeStamp = await _db.GetLatestTimestampAsync();
-        var imageAttachments = await _imageExtractionService.ExtractAttachments(latestTimeStamp ?? DateTime.UtcNow.AddDays(-2000));
-         
-        if (imageAttachments is null || imageAttachments.Count == 0)
+        try
         {
-            _logger.LogInformation($"No image attachments were found after timestamp: {latestTimeStamp}");
-            return;
-        }
+            var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+            var locaStartlTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+            _logger.LogInformation($"Function started at {locaStartlTime:yyyy-MM-dd HH:mm:ss}");
+            
+            var latestTimeStamp = await _db.GetLatestTimestampAsync();
+            var imageAttachments = await _imageExtractionService.ExtractAttachments(latestTimeStamp ?? DateTime.UtcNow.AddDays(-2000));
 
-        foreach (var attachment in imageAttachments)
-        {
-            var input = new ModelInput
+            if (imageAttachments is null || imageAttachments.Count == 0)
             {
-                ImageSource = attachment.Data
-            };
+                _logger.LogWarning($"No image attachments were found after timestamp: {latestTimeStamp}");
+                return;
+            }
 
-            var prediction = _predictionEnginePool.Predict(input);
+            foreach (var attachment in imageAttachments)
+            {
+                var input = new ModelInput
+                {
+                    ImageSource = attachment.Data
+                };
 
-            attachment.WildBoarDetected = prediction.PredictedLabel == "wildboar";
+                var prediction = _predictionEnginePool.Predict(input);
 
-            await _db.InsertResultAsync(attachment);
+                attachment.WildBoarDetected = prediction.PredictedLabel == "wildboar";
+
+                await _db.InsertResultAsync(attachment);
+            }
+
+
+            var localEndTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+            _logger.LogInformation($"Pipeline finished at {localEndTime:yyyy-MM-dd HH:mm:ss}, processed {imageAttachments.Count} images.");
         }
-
-        var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-        var localTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
-
-        _logger.LogInformation($"Pipeline finished at {localTime:yyyy-MM-dd HH:mm:ss}, processed {imageAttachments.Count} images.");
+        catch(Exception ex)
+        {
+            _logger.LogError($"Error occured, message: {ex.Message}");
+        }
     }
 }
