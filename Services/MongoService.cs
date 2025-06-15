@@ -1,4 +1,6 @@
 ﻿using DnsClient.Internal;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using WildboarMonitor.FunctionApp.Models;
 using WildboarMonitor.FunctionApp.Settings;
@@ -8,13 +10,13 @@ namespace WildboarMonitor.FunctionApp.Services;
 public class MongoService : IDatabaseService
 {
     private readonly IMongoCollection<ImageAttachment> _collection;
-    private readonly ILogger _logger;
+    private readonly ILogger<MongoService> _logger;
 
-    public MongoService(MongoSettings settings, ILogger logger)
+    public MongoService(IOptions<MongoSettings> settings, ILogger<MongoService> logger)
     {
-        var client = new MongoClient(settings.ConnectionString);
-        var database = client.GetDatabase(settings.DatabaseName);
-        _collection = database.GetCollection<ImageAttachment>(settings.CollectionName);
+        var client = new MongoClient(settings.Value.ConnectionString);
+        var database = client.GetDatabase(settings.Value.DatabaseName);
+        _collection = database.GetCollection<ImageAttachment>(settings.Value.CollectionName);
         _logger = logger;
     }
 

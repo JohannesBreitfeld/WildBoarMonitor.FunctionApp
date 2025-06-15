@@ -22,12 +22,7 @@ builder.Services.AddPredictionEnginePool<MLModel.ModelInput, MLModel.ModelOutput
 builder.Services.Configure<MongoSettings>(
     builder.Configuration.GetSection("MongoSettings"));
 
-
-builder.Services.AddScoped<IDatabaseService>(sp =>
-{
-    var settings = sp.GetRequiredService<IOptions<MongoSettings>>().Value;
-    return new MongoService(settings);
-});
+builder.Services.AddScoped<IDatabaseService, MongoService>();
 
 builder.Services.Configure<GmailSettings>(
     builder.Configuration.GetSection("GmailSettings"));
