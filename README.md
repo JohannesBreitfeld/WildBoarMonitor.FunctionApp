@@ -35,9 +35,9 @@ The images themselves are **not saved** in the database.
 ## ⚠️ Limitations
 
 - The machine learning model only performs **image-level classification** – not object detection or bounding boxes.
-- The model is only trained to **classify if the image contains a wild boar** or not.
+- It is only trained to **classify if the image contains a wild boar** or not.
 - It is **only trained on images** captured from **three specific wildlife cameras**, which limits generalizability.
-– For cost efficiency purposes, **images are not stored in the database** — only metadata and classification results are saved.
+- For cost efficiency purposes, **images are not stored in the database**, only metadata and classification results are saved.
 
 ## 📈 Possible Future Improvements
 
