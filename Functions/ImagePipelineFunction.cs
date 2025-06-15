@@ -26,7 +26,7 @@ public class ImagePipelineFunction
     }
 
     [Function("ImagePipelineFunction")]
-    public async Task Run([TimerTrigger("0 8 * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 0 8 * * *")] TimerInfo myTimer)
     {
         try
         {
